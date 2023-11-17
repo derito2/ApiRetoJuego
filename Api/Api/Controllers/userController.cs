@@ -15,16 +15,29 @@ namespace Api.Controllers
         {
             _connection = connection;
         }
-
         [HttpGet("User")]
-        public ActionResult<List<user>> Get()
+        public ActionResult<List<user>> Get(string email)
         {
             List<user> ListaUsuarios = new List<user>();
             try
             {
                 _connection.Open();
-                using (MySqlCommand cmd = new MySqlCommand("SELECT * FROM user", _connection))
+
+                string queryString = "SELECT * FROM user";
+
+                if (!string.IsNullOrEmpty(email))
                 {
+                    // Si se proporciona un valor de correo electrónico, agrega una cláusula WHERE para filtrar por correo electrónico
+                    queryString += " WHERE email = @Email";
+                }
+
+                using (MySqlCommand cmd = new MySqlCommand(queryString, _connection))
+                {
+                    if (!string.IsNullOrEmpty(email))
+                    {
+                        cmd.Parameters.AddWithValue("@Email", email);
+                    }
+
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
@@ -58,6 +71,7 @@ namespace Api.Controllers
             }
             return Ok(ListaUsuarios);
         }
+
 
         [HttpPost("RegisterUser")]
         public ActionResult<user> Post([FromBody] user newUser)
@@ -120,9 +134,8 @@ namespace Api.Controllers
                 _connection.Close();
             }
         }
-
         [HttpPost("Login")]
-        public ActionResult Login([FromBody] UserLoginDto loginDto)
+        public ActionResult<LoginResponseDto> Login([FromBody] UserLoginDto loginDto)
         {
             try
             {
@@ -142,7 +155,12 @@ namespace Api.Controllers
                             // En una aplicación real, deberías comparar un hash de la contraseña proporcionada con el hash almacenado
                             if (storedPassword == loginDto.Password)
                             {
-                                return Ok("Inicio de sesión exitoso.");
+                                var loginResponse = new LoginResponseDto
+                                {
+                                    Email = loginDto.Email, // Aquí guardamos el correo electrónico
+                                    Message = "Inicio de sesión exitoso."
+                                };
+                                return Ok(loginResponse);
                             }
                             else
                             {
@@ -170,13 +188,18 @@ namespace Api.Controllers
             }
         }
 
+
         public class UserLoginDto
         {
             public string Email { get; set; }
             public string Password { get; set; }
         }
 
-
+        public class LoginResponseDto
+        {
+            public string Email { get; set; }
+            public string Message { get; set; }
+        }
 
 
     }
