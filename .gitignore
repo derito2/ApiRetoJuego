@@ -60,3 +60,8 @@ ehthumbs.db
 # Uncomment if using Telerik JustMock
 #*.jmconfig
 
+*.cache
+*.editorconfig
+*.dll
+Api/Api/bin/Debug/net6.0/Api
+Api/Api/bin/Debug/net6.0/Api.pdb
