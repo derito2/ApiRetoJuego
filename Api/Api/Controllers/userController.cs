@@ -188,6 +188,45 @@ namespace Api.Controllers
             }
         }
 
+        [HttpGet("GetUserCoins")]
+        public async Task<ActionResult<int>> GetUserCoins([FromQuery] string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return BadRequest("El correo electrónico es necesario para la consulta.");
+            }
+
+            try
+            {
+                _connection.Open();
+                using (var cmd = new MySqlCommand("SELECT coins FROM user WHERE email = @Email LIMIT 1", _connection))
+                {
+                    cmd.Parameters.AddWithValue("@Email", email);
+                    var result = await cmd.ExecuteScalarAsync();
+
+                    if (result != null)
+                    {
+                        return Convert.ToInt32(result);
+                    }
+                    else
+                    {
+                        return NotFound("Usuario no encontrado.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error: " + ex.Message);
+            }
+            finally
+            {
+                if (_connection.State == System.Data.ConnectionState.Open)
+                {
+                    _connection.Close();
+                }
+            }
+        }
+
 
         public class UserLoginDto
         {
