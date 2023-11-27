@@ -65,3 +65,13 @@ ehthumbs.db
 *.dll
 Api/Api/bin/Debug/net6.0/Api
 Api/Api/bin/Debug/net6.0/Api.pdb
+*.dll
+*.dll
+*.pdb
+*.json
+*.dll
+*.pdb
+*.dll
+*.dll
+*.json
+*.cache

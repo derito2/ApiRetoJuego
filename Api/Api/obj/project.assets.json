@@ -1368,11 +1368,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/javierdavila/Documents/TEC/ITC/CUARTO SEMESTRE/Construcción de software/webClase/RetoFrontEnd/Api/Api/Api.csproj",
+      "projectUniqueName": "/Users/javierdavila/Documents/TEC/ITC/CUARTO SEMESTRE/Construcción de software/webClase/Reto/ApiRetoJuego/Api/Api/Api.csproj",
       "projectName": "Api",
-      "projectPath": "/Users/javierdavila/Documents/TEC/ITC/CUARTO SEMESTRE/Construcción de software/webClase/RetoFrontEnd/Api/Api/Api.csproj",
+      "projectPath": "/Users/javierdavila/Documents/TEC/ITC/CUARTO SEMESTRE/Construcción de software/webClase/Reto/ApiRetoJuego/Api/Api/Api.csproj",
       "packagesPath": "/Users/javierdavila/.nuget/packages/",
-      "outputPath": "/Users/javierdavila/Documents/TEC/ITC/CUARTO SEMESTRE/Construcción de software/webClase/RetoFrontEnd/Api/Api/obj/",
+      "outputPath": "/Users/javierdavila/Documents/TEC/ITC/CUARTO SEMESTRE/Construcción de software/webClase/Reto/ApiRetoJuego/Api/Api/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/javierdavila/.nuget/NuGet/NuGet.Config"

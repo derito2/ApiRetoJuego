@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Rim9/f5eW8NGadmb5OelWi9pIxkCIsPsSOzl39EyVjrfoc5q66C3HBki5nVmH1x5sYywqVfZPKDBY8KWQyifJw==",
+  "dgSpecHash": "Btt9knO+V6x08cH+HGKS0/vKuYLp4klxz0Wk2/ZWSInF0e/Poq++mLKFjUUL1uPCLkSkmV10bYJP/5EveRQJ5w==",
   "success": true,
-  "projectFilePath": "/Users/javierdavila/Documents/TEC/ITC/CUARTO SEMESTRE/Construcción de software/webClase/RetoFrontEnd/Api/Api/Api.csproj",
+  "projectFilePath": "/Users/javierdavila/Documents/TEC/ITC/CUARTO SEMESTRE/Construcción de software/webClase/Reto/ApiRetoJuego/Api/Api/Api.csproj",
   "expectedPackageFiles": [
     "/Users/javierdavila/.nuget/packages/google.protobuf/3.19.4/google.protobuf.3.19.4.nupkg.sha512",
     "/Users/javierdavila/.nuget/packages/k4os.compression.lz4/1.2.6/k4os.compression.lz4.1.2.6.nupkg.sha512",
