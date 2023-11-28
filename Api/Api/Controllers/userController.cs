@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 
@@ -151,10 +152,13 @@ namespace Api.Controllers
                             // En una aplicación real, deberías comparar un hash de la contraseña proporcionada con el hash almacenado
                             if (storedPassword == loginDto.Password)
                             {
+                                var userRol = reader["rol"].ToString();
                                 var loginResponse = new LoginResponseDto
                                 {
                                     Email = loginDto.Email, // Aquí guardamos el correo electrónico
-                                    Message = "Inicio de sesión exitoso."
+                                    Message = "Inicio de sesión exitoso.",
+                                    Rol = userRol
+
                                 };
                                 return Ok(loginResponse);
                             }
@@ -222,6 +226,125 @@ namespace Api.Controllers
                 }
             }
         }
+        [HttpGet("UserCountsByState")]
+        public async Task<ActionResult<IEnumerable<UserCountByStateDto>>> GetUserCountsByState()
+        {
+            var userCounts = new List<UserCountByStateDto>();
+            try
+            {
+                _connection.Open();
+                var query = "SELECT state, COUNT(user_id) AS userCount FROM user GROUP BY state ORDER BY userCount DESC";
+                using (var cmd = new MySqlCommand(query, _connection))
+                {
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            var userCountByState = new UserCountByStateDto
+                            {
+                                State = reader["state"].ToString(),
+                                UserCount = Convert.ToInt32(reader["userCount"])
+                            };
+                            userCounts.Add(userCountByState);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error: " + ex.Message);
+            }
+            finally
+            {
+                if (_connection.State == System.Data.ConnectionState.Open)
+                {
+                    _connection.Close();
+                }
+            }
+
+            return Ok(userCounts);
+        }
+
+        [HttpGet("UserAges")]
+        public async Task<ActionResult<IEnumerable<UserAgeDto>>> GetUserAges()
+        {
+            var userAges = new List<UserAgeDto>();
+            try
+            {
+                _connection.Open();
+                var query = @"
+         SELECT TIMESTAMPDIFF(YEAR, birth_date, CURDATE()) AS Age, COUNT(*) AS Count
+         FROM user
+         GROUP BY Age
+         ORDER BY Count DESC;";
+                using (var command = new MySqlCommand(query, _connection))
+                {
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (reader.Read())
+                        {
+                            userAges.Add(new UserAgeDto
+                            {
+                                Age = reader.GetInt32("Age"),
+                                UserCount = reader.GetInt32("Count")
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error: " + ex.Message);
+            }
+            finally
+            {
+                if (_connection.State == System.Data.ConnectionState.Open)
+                {
+                    _connection.Close();
+                }
+            }
+
+            return Ok(userAges);
+        }
+
+        [HttpGet("UserGenders")]
+        public async Task<ActionResult<IEnumerable<UserGenderDto>>> GetUserGenders()
+        {
+            var userGenders = new List<UserGenderDto>();
+            try
+            {
+                _connection.Open();
+                var query = "select count(*) as user_count, gender from user group by gender;";
+                using (var command = new MySqlCommand(query, _connection))
+                {
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (reader.Read())
+                        {
+                            userGenders.Add(new UserGenderDto
+                            {
+                                Gender = reader["gender"].ToString(),
+                                UserCount = reader.GetInt32("user_count")
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error: " + ex.Message);
+            }
+            finally
+            {
+                if (_connection.State == System.Data.ConnectionState.Open)
+                {
+                    _connection.Close();
+                }
+            }
+
+            return Ok(userGenders);
+        }
+
 
 
         public class UserLoginDto
@@ -234,6 +357,25 @@ namespace Api.Controllers
         {
             public string Email { get; set; }
             public string Message { get; set; }
+            public string Rol { get; set; }
+        }
+
+        public class UserCountByStateDto
+        {
+            public string State { get; set; }
+            public int UserCount { get; set; }
+        }
+
+        public class UserAgeDto
+        {
+            public int Age { get; set; }
+            public int UserCount { get; set; }
+        }
+
+        public class UserGenderDto
+        {
+            public string Gender { get; set; }
+            public int UserCount { get; set; }
         }
 
 
