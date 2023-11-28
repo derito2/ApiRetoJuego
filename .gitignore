@@ -75,3 +75,10 @@ Api/Api/bin/Debug/net6.0/Api.pdb
 *.dll
 *.json
 *.cache
+*.dll
+*.dll
+*.pdb
+*.dll
+*.pdb
+*.dll
+*.dll

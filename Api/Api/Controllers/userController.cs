@@ -16,27 +16,23 @@ namespace Api.Controllers
             _connection = connection;
         }
         [HttpGet("User")]
-        public ActionResult<List<user>> Get(string email)
+        public ActionResult<List<user>> Get([FromQuery] string email)
         {
+            if (string.IsNullOrEmpty(email))
+            {
+                return BadRequest("El correo electrónico es necesario para la consulta.");
+            }
+
             List<user> ListaUsuarios = new List<user>();
             try
             {
                 _connection.Open();
 
-                string queryString = "SELECT * FROM user";
-
-                if (!string.IsNullOrEmpty(email))
-                {
-                    // Si se proporciona un valor de correo electrónico, agrega una cláusula WHERE para filtrar por correo electrónico
-                    queryString += " WHERE email = @Email";
-                }
+                string queryString = "SELECT * FROM user WHERE email = @Email";
 
                 using (MySqlCommand cmd = new MySqlCommand(queryString, _connection))
                 {
-                    if (!string.IsNullOrEmpty(email))
-                    {
-                        cmd.Parameters.AddWithValue("@Email", email);
-                    }
+                    cmd.Parameters.AddWithValue("@Email", email);
 
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
