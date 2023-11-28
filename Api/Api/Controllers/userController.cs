@@ -345,6 +345,47 @@ namespace Api.Controllers
             return Ok(userGenders);
         }
 
+        [HttpGet("CoinsByState")]
+        public async Task<ActionResult<IEnumerable<CoinsStateDto>>> GetCoinsByState()
+        {
+            var coinsByState = new List<CoinsStateDto>();
+            try
+            {
+                _connection.Open();
+                var query = "SELECT state, SUM(coins) AS total_coins FROM user GROUP BY state ORDER BY total_coins DESC;";
+                using (var command = new MySqlCommand(query, _connection))
+                {
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (reader.Read())
+                        {
+                            coinsByState.Add(new CoinsStateDto
+                            {
+                                State = reader["state"].ToString(),
+                                TotalCoins = reader.GetInt32("total_coins")
+                            });
+                        }
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error: " + ex.Message);
+            }
+            finally
+            {
+                if (_connection.State == System.Data.ConnectionState.Open)
+                {
+                    _connection.Close();
+                }
+            }
+
+            return Ok(coinsByState);
+
+        }
+
+
 
 
         public class UserLoginDto
@@ -376,6 +417,12 @@ namespace Api.Controllers
         {
             public string Gender { get; set; }
             public int UserCount { get; set; }
+        }
+
+        public class CoinsStateDto
+        {
+            public string State { get; set; }
+            public int TotalCoins { get; set; }
         }
 
 
