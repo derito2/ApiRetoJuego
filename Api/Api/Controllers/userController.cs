@@ -384,6 +384,48 @@ namespace Api.Controllers
             return Ok(coinsByState);
 
         }
+        [HttpPut("UpdateUserCoins")]
+        public ActionResult UpdateUserCoins([FromQuery] string email, [FromQuery] int newCoins)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return BadRequest("El correo electrónico es necesario para la actualización.");
+            }
+
+            try
+            {
+                _connection.Open();
+
+                using (var cmd = new MySqlCommand("UPDATE user SET coins = @NewCoins WHERE email = @Email", _connection))
+                {
+                    cmd.Parameters.AddWithValue("@NewCoins", newCoins);
+                    cmd.Parameters.AddWithValue("@Email", email);
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        return Ok("La cantidad de monedas ha sido actualizada con éxito.");
+                    }
+                    else
+                    {
+                        return NotFound("Usuario no encontrado.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error interno del servidor: " + ex.Message);
+            }
+            finally
+            {
+                if (_connection.State == ConnectionState.Open)
+                {
+                    _connection.Close();
+                }
+            }
+        }
+
 
 
 
